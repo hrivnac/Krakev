@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com</groupId>
   <artifactId>Krakev</artifactId>
@@ -11,14 +11,12 @@
   <description>AI modules for Lomikel</description>
   <url>http://cern.ch/hrivnac/Activities/Packages/Krakev</url>
 
-  <parent>
-    <groupId>com.baeldung</groupId>
-    <artifactId>parent-modules</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <relativePath>../com.baeldung/pom.xml</relativePath>
-  </parent>
-
   <dependencies>
+    <dependency>
+      <groupId>org.deeplearning4j</groupId>
+      <artifactId>deeplearning4j-ui</artifactId>
+      <version>${dl4j.version}</version>
+      </dependency>
     <dependency>
       <groupId>org.nd4j</groupId>
       <artifactId>nd4j-api</artifactId>
@@ -40,14 +38,14 @@
       <version>${dl4j.version}</version>
       </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${org.slf4j.version}</version>
+      <groupId>org.deeplearning4j</groupId>
+      <artifactId>deeplearning4j-datasets</artifactId>
+      <version>${dl4j.version}</version>
       </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>${org.slf4j.version}</version>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
       </dependency>
     <dependency>
       <groupId>org.datavec</groupId>
@@ -65,12 +63,41 @@
       <version>${lombok.version}</version>
       <scope>provided</scope>
       </dependency>
+    <dependency>
+      <groupId>tech.tablesaw</groupId>
+      <artifactId>tablesaw-core</artifactId>
+      <version>${tablesaw.version}</version>
+      </dependency>
+    <dependency>
+      <groupId>tech.tablesaw</groupId>
+      <artifactId>tablesaw-jsplot</artifactId>
+      <version>${tablesaw.version}</version>
+      </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.version}</version>
+      </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
+      </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-annotations</artifactId>
+      <version>${jackson.version}</version>
+      </dependency>
     </dependencies>
 
   <properties>
-    <dl4j.version>0.9.1</dl4j.version>
+    <dl4j.version>1.0.0-M2.1</dl4j.version>
     <httpclient.version>4.3.5</httpclient.version>
-  </properties>
+    <logback.version>1.1.7</logback.version>
+    <lombok.version>1.18.30</lombok.version>
+    <tablesaw.version>0.43.1</tablesaw.version>
+    <jackson.version>2.17.1</jackson.version>
+    </properties>
 
   <build>
     <defaultGoal>install</defaultGoal>
@@ -97,7 +124,8 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.Krakev.deeplearning4j.IrisClassifier</mainClass>
+              <mainClass>com.Krakev.deeplearning4j.IrisClassifier.IrisClassifier</mainClass>
+              <!--mainClass>com.Krakev.deeplearning4j.Conv1DUCISequenceClassification.Conv1DUCISequenceClassification</mainClass-->
               </manifest>
             </archive>
           <descriptorRefs>
