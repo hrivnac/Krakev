@@ -124,8 +124,9 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.Krakev.deeplearning4j.IrisClassifier.IrisClassifier</mainClass>
+              <!--mainClass>com.Krakev.deeplearning4j.IrisClassifier.IrisClassifier</mainClass-->
               <!--mainClass>com.Krakev.deeplearning4j.Conv1DUCISequenceClassification.Conv1DUCISequenceClassification</mainClass-->
+              <mainClass>com.Krakev.deeplearning4j.UCISequenceClassification.UCISequenceClassification</mainClass>
               </manifest>
             </archive>
           <descriptorRefs>
