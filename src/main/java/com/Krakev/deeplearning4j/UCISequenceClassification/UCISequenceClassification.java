@@ -96,14 +96,21 @@ import java.util.Random;
 public class UCISequenceClassification {
 
   public static void main(String[] args) throws Exception {
-    downloadUCIData();
+    UCISequenceClassification classifier = new UCISequenceClassification();
+    classifier.setUpStorage("src/main/resources/uci/");
+    String data = classifier.getExampleData();
+    classifier.prepareData(data);
+    classifier.train();
+    }
   
+  public void train() throws Exception {  
+    
     // ----- Load the training data -----
     // Note that we have 450 training files for features: train/features/0.csv through train/features/449.csv
     SequenceRecordReader trainFeatures = new CSVSequenceRecordReader();
-    trainFeatures.initialize(new NumberedFileInputSplit(featuresDirTrain.getAbsolutePath() + "/%d.csv", 0, 449));
+    trainFeatures.initialize(new NumberedFileInputSplit(_featuresDirTrain.getAbsolutePath() + "/%d.csv", 0, 449));
     SequenceRecordReader trainLabels = new CSVSequenceRecordReader();
-    trainLabels.initialize(new NumberedFileInputSplit(labelsDirTrain.getAbsolutePath() + "/%d.csv", 0, 449));
+    trainLabels.initialize(new NumberedFileInputSplit(_labelsDirTrain.getAbsolutePath() + "/%d.csv", 0, 449));
   
     int miniBatchSize = 10;
     int numLabelClasses = 6;
@@ -126,9 +133,9 @@ public class UCISequenceClassification {
     // ----- Load the test data -----
     // Same process as for the training data.
     SequenceRecordReader testFeatures = new CSVSequenceRecordReader();
-    testFeatures.initialize(new NumberedFileInputSplit(featuresDirTest.getAbsolutePath() + "/%d.csv", 0, 149));
+    testFeatures.initialize(new NumberedFileInputSplit(_featuresDirTest.getAbsolutePath() + "/%d.csv", 0, 149));
     SequenceRecordReader testLabels = new CSVSequenceRecordReader();
-    testLabels.initialize(new NumberedFileInputSplit(labelsDirTest.getAbsolutePath() + "/%d.csv", 0, 149));
+    testLabels.initialize(new NumberedFileInputSplit(_labelsDirTest.getAbsolutePath() + "/%d.csv", 0, 149));
   
     DataSetIterator testData = new SequenceRecordReaderDataSetIterator(testFeatures,
                                                                        testLabels,
@@ -176,24 +183,27 @@ public class UCISequenceClassification {
     log.info("----- Example Complete -----");
     }
 
-  // This method downloads the data, and converts the "one time series per line" format into a suitable
-  // CSV sequence format that DataVec (CsvSequenceRecordReader) and DL4J can read.
-  private static void downloadUCIData() throws Exception {
-    if (baseDir.exists()) return; // Data already exists, don't download it again
-    
+  public String getExampleData() throws Exception {
     String url = "https://archive.ics.uci.edu/ml/machine-learning-databases/synthetic_control-mld/synthetic_control.data";
     String data = IOUtils.toString(new URL(url), (Charset) null);
+    return data;
+    }
+
+  // This method downloads the data, and converts the "one time series per line" format into a suitable
+  // CSV sequence format that DataVec (CsvSequenceRecordReader) and DL4J can read.
+  public void prepareData(String data) throws Exception {
+    //if (_baseDir.exists()) return; // Data already exists, don't download it again
     
     String[] lines = data.split("\n");
     
-    //Create directories
-    baseDir.mkdir();
-    baseTrainDir.mkdir();
-    featuresDirTrain.mkdir();
-    labelsDirTrain.mkdir();
-    baseTestDir.mkdir();
-    featuresDirTest.mkdir();
-    labelsDirTest.mkdir();
+    // Create directories
+    _baseDir.mkdir();
+    _baseTrainDir.mkdir();
+    _featuresDirTrain.mkdir();
+    _labelsDirTrain.mkdir();
+    _baseTestDir.mkdir();
+    _featuresDirTest.mkdir();
+    _labelsDirTest.mkdir();
     
     int lineCount = 0;
     List<Pair<String, Integer>> contentAndLabels = new ArrayList<>();
@@ -214,13 +224,13 @@ public class UCISequenceClassification {
       File outPathFeatures;
       File outPathLabels;
       if (trainCount < nTrain) {
-        outPathFeatures = new File(featuresDirTrain, trainCount + ".csv");
-        outPathLabels = new File(labelsDirTrain, trainCount + ".csv");
+        outPathFeatures = new File(_featuresDirTrain, trainCount + ".csv");
+        outPathLabels = new File(_labelsDirTrain, trainCount + ".csv");
         trainCount++;
         }
       else {
-        outPathFeatures = new File(featuresDirTest, testCount + ".csv");
-        outPathLabels = new File(labelsDirTest, testCount + ".csv");
+        outPathFeatures = new File(_featuresDirTest, testCount + ".csv");
+        outPathLabels = new File(_labelsDirTest, testCount + ".csv");
         testCount++;
         }
       
@@ -228,17 +238,25 @@ public class UCISequenceClassification {
       FileUtils.writeStringToFile(outPathLabels, p.getSecond().toString(), (Charset) null);
       }
     }
-       
-  private static final Logger log = LoggerFactory.getLogger(UCISequenceClassification.class);
-
-  // 'baseDir': Base directory for the data. Change this if you want to save the data somewhere else
-  private static File baseDir = new File("src/main/resources/uci/");
-  private static File baseTrainDir = new File(baseDir, "train");
-  private static File featuresDirTrain = new File(baseTrainDir, "features");
-  private static File labelsDirTrain = new File(baseTrainDir, "labels");
-  private static File baseTestDir = new File(baseDir, "test");
-  private static File featuresDirTest = new File(baseTestDir, "features");
-  private static File labelsDirTest = new File(baseTestDir, "labels");
+      
+  public void setUpStorage(String baseDirName) {
+    _baseDir          = new File(baseDirName);
+    _baseTrainDir     = new File(_baseDir,      "train");
+    _featuresDirTrain = new File(_baseTrainDir, "features");
+    _labelsDirTrain   = new File(_baseTrainDir, "labels");
+    _baseTestDir      = new File(_baseDir,      "test");
+    _featuresDirTest  = new File(_baseTestDir, "features");
+    _labelsDirTest    = new File(_baseTestDir, "labels");
+    }
     
+  private File _baseDir;
+  private File _baseTrainDir;
+  private File _featuresDirTrain;
+  private File _labelsDirTrain;
+  private File _baseTestDir;
+  private File _featuresDirTest;
+  private File _labelsDirTest;
+        
+  private static final Logger log = LoggerFactory.getLogger(UCISequenceClassification.class);
     
   }
